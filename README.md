@@ -7,7 +7,7 @@
 ------------
 ```
 $ git clone https://github.com/NoelEmaas/mst-calculator-asm.git
-$ cd mst-calculator-asm
+$ cd mct-calculator-asm
 $ chmod +x run
 $ ./run main.asm
 ```
