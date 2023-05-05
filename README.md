@@ -7,7 +7,7 @@
 ------------
 ```
 $ git clone https://github.com/NoelEmaas/dec-bin-asm.git
-$ dec-bin-asm
+$ cd dec-bin-asm
 $ chmod +x run
 $ ./run main.asm
 ```
