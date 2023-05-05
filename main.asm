@@ -10,14 +10,14 @@ STDOUT      equ 1
 section .data
     instruction_prompt     db  `Welcome to Binary to Decimal & Decimal to Binary Converter! \nPlease select an operation to perform:\nEnter 1 - Convert Binary to Decimal\nEnter 2 - Convert Decimal to binary`, 0h
     operation_prompt       db  `Select Operation: `, 0h
-    dec_ip_prompt          db  "Enter a decimal number ranging from (-2,147,483,648 to 2,147,483,647) to be converted to binary: ", 0h
-    bin_ip_prompt          db  "Enter a binary number (maximum of 32-bits) to be converted to a decimal number: ", 0h    
-    binary_digits          db  32 dup('0')
+    dec_prompt             db  "Enter a decimal number ranging from (-2,147,483,648 to 2,147,483,647) to be converted to binary: ", 0h
+    bin_prompt             db  "Enter a binary number (maximum of 32-bits) to be converted to a decimal number: ", 0h    
+    dec_result             dw   0
 
 section .bss
     op_input  resb 2
     dec_input resb 32       ; reserve 32 bits for decimal input
-    bin_input resb 32       ; reserve 32 bits for binary input
+    bin_input resb 8      ; reserve 32 bits for binary input
 
 section .text
     global _start
@@ -43,7 +43,7 @@ _start:
     je      get_binary_input
     jne     get_decimal_input
 
-    
+
 
 ; -----------------------------------------------------------------
 ; FUNCTIONS FOR CONVERTING BINARY TO DECIMAL
@@ -51,7 +51,7 @@ _start:
 ; function to get binary input
 get_binary_input:
     ; display input binary prompt 
-    mov     eax, bin_ip_prompt
+    mov     eax, bin_prompt
     call    sprint
 
     ; get user input for binary
@@ -61,7 +61,33 @@ get_binary_input:
     mov     edx, 32
     int     80h
     
-    call    exit_program
+    mov     eax, bin_input
+    call    slen
+    mov     ecx, eax
+    mov     eax, bin_input
+    call    atoi
+
+extract_digits:
+    xor edx, edx
+    mov ebx, 10
+    div ebx
+
+    cmp edx, 1
+    je  compute_bit_value
+    jne skip_zero_bit
+
+    compute_bit_value:
+        push eax
+        mov eax, 2
+        call iprint
+        pop eax
+
+    skip_zero_bit:
+
+    cmp eax, 0
+    jg extract_digits
+    jle exit_program
+
 
 
 
@@ -76,7 +102,7 @@ get_binary_input:
 ; function to get decimal input and calls convert to binary function
 get_decimal_input:
     ; display input decimal prompt
-    mov     eax, dec_ip_prompt
+    mov     eax, dec_prompt
     call    sprint
 
     ; get user input for decimal
@@ -103,18 +129,18 @@ convert_to_bin:
     push    edx             ; push remainder onto the stack
     inc     ecx             ; increment counter
     cmp     eax, 0          ; check if decimal input is equal to 0
-    je      pop_edx
+    je      pop_remainders  ; display all the remainders when decimal reaches 0
     jne     convert_to_bin  ; continue to loop until decimal input is equal to 0
 
 
 ; function that pop all the remainders to display the binary result in reverse order
-pop_edx:
-    pop eax                 ; restore remainder from the edx that we pushed onto the stack
-    call iprint             ; print remainder as integer
-    dec ecx                 ; decrement counter
-    cmp ecx, 0              ; check if counter is not equal to 0
-    je  exit_program
-    jne pop_edx             ; continue to pop all the remainders until counter is 0
+pop_remainders:
+    pop     eax             ; restore remainder from the edx that we pushed onto the stack
+    call    iprint          ; print remainder as integer
+    dec     ecx             ; decrement counter
+    cmp     ecx, 0          ; check if counter is not equal to 0
+    je      exit_program    ; exit program when all the remainders are popped
+    jne     pop_remainders  ; continue to pop all the remainders until counter is 0
     
 ; END OF CONVERTING DECIMAL TO BINARY
 ; -----------------------------------------------------------------
