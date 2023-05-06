@@ -61,35 +61,84 @@ get_binary_input:
     mov     edx, 32
     int     80h
     
+    ; get binary digit length
     mov     eax, bin_input
     call    slen
-    mov     ecx, eax
+
+    ; assign length to counter
+    ;mov     ecx, eax
+    mov ecx, 0
+
+    ; conver string input to integer
     mov     eax, bin_input
     call    atoi
 
 extract_digits:
-    xor edx, edx
-    mov ebx, 10
-    div ebx
+    xor     edx, edx
+    mov     ebx, 10
+    div     ebx
 
-    cmp edx, 1
-    je  compute_bit_value
-    jne skip_zero_bit
+    cmp     edx, 1
+    je      get_bit_value
+    jne     skip_zero_bit
 
-    compute_bit_value:
-        push eax
-        mov eax, 2
-        call iprint
-        pop eax
+    get_bit_value:
+        cmp     ecx, 0
+        je      bit_value_1
+        
+        cmp     ecx, 1
+        je      bit_value_2
+
+        cmp     ecx, 1
+        jg      compute_bit_value
+
+        bit_value_1:
+            push    eax
+            push    ecx
+            mov     eax, 1
+            jmp     add_bit_value
+      
+        bit_value_2:
+            push    eax
+            push    ecx
+            mov     eax, 2
+            jmp     add_bit_value
+
+        compute_bit_value:
+            push    eax
+            push    ecx
+            mov     eax, 2
+            call    pow
+            jmp     add_bit_value
+      
+    add_bit_value:
+        mov     ebx, eax
+        mov     eax, [dec_input]
+        add     eax, ebx
+        mov     [dec_input], eax
+        pop     ecx
+        pop     eax
 
     skip_zero_bit:
+      ; do nothing when bit is 0
+  
+    inc     ecx
+    cmp     eax, 0
+    jg      extract_digits
+    jle     display_result
 
-    cmp eax, 0
-    jg extract_digits
-    jle exit_program
+pow:
+    mov     ebx, 2
+    mul     ebx
+    dec     ecx
+    cmp     ecx, 1
+    jg      pow
+    ret
 
-
-
+display_result:
+    mov     eax, [dec_input]
+    call    iprintLF    
+    call    exit_program
 
 ; END OF CONVERTING BINARY TO DECIMAL
 ; -----------------------------------------------------------------
