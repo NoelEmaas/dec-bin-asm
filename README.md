@@ -11,7 +11,3 @@ $ cd dec-bin-asm
 $ chmod +x run
 $ ./run main.asm
 ```
-
-<samp> Or run it online. </samp>
-------------
-<samp> https://www.jdoodle.com/embed/v0/6cqh </samp>
