@@ -1,7 +1,8 @@
 ;source: https://asmtutor.com/
 
-; int atoi(Integer number)
 ; Ascii to integer function (atoi)
+
+; Push all the values inside the main registers to the stack so that we can preserve the original values of the registers after executing thiss function
 atoi:
     push    ebx             ; preserve ebx on the stack to be restored after function runs
     push    ecx             ; preserve ecx on the stack to be restored after function runs
@@ -10,7 +11,16 @@ atoi:
     mov     esi, eax        ; move pointer in eax into esi (our number to convert)
     mov     eax, 0          ; initialise eax with decimal value 0
     mov     ecx, 0          ; initialise ecx with decimal value 0
- 
+
+; Algorithm for converting string to integer:
+; 1. Traverse each character of the string starting from the left most character.
+; 2. Subtract the current character to 48 (48 in ascii represents character 0).
+; 3. After subtracting the character to 48 we will get its integer value.
+; 4. Add the integer value of the current character to eax.
+; 5. Multiply eax by 10.
+; 6. Continue to loop until each character is traversed.
+; 7. Divide the result by 10 since we still multiplied the value of eax by 10 in the last character.
+
 .multiplyLoop:
     xor     ebx, ebx        ; resets both lower and uppper bytes of ebx to be 0
     mov     bl, [esi+ecx]   ; move a single byte into ebx register's lower half

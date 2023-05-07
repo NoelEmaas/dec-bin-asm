@@ -71,7 +71,7 @@ invalid_operation:
 ; 4. Then we display the value of dec_result which contains the sum of all the positional values with bit value of 1.
 
 get_binary_input:
-    print_str bin_prompt                ; display binary input prompt
+    print_str   bin_prompt              ; display binary input prompt
     read_input  bin_input, 32           ; read binary input frm user
 
     mov     ecx, 0                      ; set counter to 0
@@ -133,7 +133,7 @@ skip_zero_bit:                          ; skip to this part and do nothing when 
     inc     ecx                         ; increment counter
     cmp     eax, 0                      ; check if it already extracted all bits in the binary
     jg      convert_to_dec              ; continue to loop until it extracted all bits in the binary
-    jle     display_dec_result              ; diplay result when finished
+    jle     display_dec_result          ; diplay result when finished
 
 display_dec_result:
     print_str    dec_result_prompt      ; display result prompt
